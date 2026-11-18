@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { Database } from "./config/db.js";
 import ErrorMiddleware from "./middlewares/errorMiddleware.js";
+import authRoutes from "./routes/authRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -19,6 +20,8 @@ app.get("/health", (_req, res) => {
   res.status(200).json({ status: "OK",
     timestamp: new Date().toISOString()});
 });
+// Routes
+app.use("/api/auth", authRoutes);
 
 
 // Error handling middleware 404 and Global error Handling

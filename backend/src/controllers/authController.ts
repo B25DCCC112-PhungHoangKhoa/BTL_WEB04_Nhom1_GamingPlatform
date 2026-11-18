@@ -1,14 +1,14 @@
-import type { Request, Response, NextFunction } from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { User } from '../models/User.js';
-import type { RegisterRequestBody, LoginRequestBody } from '../types/index.js';
+import type { Request, Response, NextFunction } from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { User } from "../models/User.js";
+import type { RegisterRequestBody, LoginRequestBody } from "../types/index.js";
 
 export class AuthController {
   public static async register(
     req: Request<Record<string, never>, unknown, RegisterRequestBody>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { name, email, password, phoneNumber } = req.body;
@@ -16,7 +16,7 @@ export class AuthController {
       if (!name || !email || !password) {
         res.status(400).json({
           success: false,
-          message: 'Họ tên, email và mật khẩu là bắt buộc'
+          message: "Họ tên, email và mật khẩu là bắt buộc",
         });
         return;
       }
@@ -24,16 +24,18 @@ export class AuthController {
       if (password.length < 6) {
         res.status(400).json({
           success: false,
-          message: 'Mật khẩu phải có tối thiểu 6 ký tự'
+          message: "Mật khẩu phải có tối thiểu 6 ký tự",
         });
         return;
       }
 
-      const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
+      const existingUser = await User.findOne({
+        email: email.toLowerCase().trim(),
+      });
       if (existingUser) {
         res.status(400).json({
           success: false,
-          message: 'Email này đã được sử dụng'
+          message: "Email này đã được sử dụng",
         });
         return;
       }
@@ -46,17 +48,17 @@ export class AuthController {
         email: email.toLowerCase().trim(),
         password: hashedPassword,
         phoneNumber: phoneNumber ? phoneNumber.trim() : null,
-        role: 'client'
+        role: "client",
       });
 
-      const jwtSecret = process.env.JWT_SECRET || 'default_jwt_secret';
+      const jwtSecret = process.env.JWT_SECRET || "default_jwt_secret";
       const token = jwt.sign(
         {
           id: newUser._id.toString(),
-          role: newUser.role
+          role: newUser.role,
         },
         jwtSecret,
-        { expiresIn: '7d' }
+        { expiresIn: "7d" },
       );
 
       res.status(201).json({
@@ -67,8 +69,8 @@ export class AuthController {
           name: newUser.name,
           email: newUser.email,
           role: newUser.role,
-          phoneNumber: newUser.phoneNumber
-        }
+          phoneNumber: newUser.phoneNumber,
+        },
       });
     } catch (error) {
       next(error);
@@ -77,7 +79,7 @@ export class AuthController {
   public static async login(
     req: Request<Record<string, never>, unknown, LoginRequestBody>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { email, password } = req.body;
@@ -85,7 +87,7 @@ export class AuthController {
       if (!email || !password) {
         res.status(400).json({
           success: false,
-          message: 'Vui lòng cung cấp email và mật khẩu'
+          message: "Vui lòng cung cấp email và mật khẩu",
         });
         return;
       }
@@ -94,7 +96,7 @@ export class AuthController {
       if (!user || !user.password) {
         res.status(401).json({
           success: false,
-          message: 'Email hoặc mật khẩu không chính xác'
+          message: "Email hoặc mật khẩu không chính xác",
         });
         return;
       }
@@ -103,19 +105,19 @@ export class AuthController {
       if (!isMatch) {
         res.status(401).json({
           success: false,
-          message: 'Email hoặc mật khẩu không chính xác'
+          message: "Email hoặc mật khẩu không chính xác",
         });
         return;
       }
 
-      const jwtSecret = process.env.JWT_SECRET || 'default_jwt_secret';
+      const jwtSecret = process.env.JWT_SECRET || "default_jwt_secret";
       const token = jwt.sign(
         {
           id: user._id.toString(),
-          role: user.role
+          role: user.role,
         },
         jwtSecret,
-        { expiresIn: '7d' }
+        { expiresIn: "7d" },
       );
 
       res.status(200).json({
@@ -126,11 +128,40 @@ export class AuthController {
           name: user.name,
           email: user.email,
           role: user.role,
-          phoneNumber: user.phoneNumber
-        }
+          phoneNumber: user.phoneNumber,
+        },
       });
     } catch (error) {
       next(error);
+    }
+  }
+  public static async getMe(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+        if(!req.user){
+            res.status(401).json({
+                success: false,
+                message: "Yêu cầu xác thực tài khoản"
+            });
+            return;
+        }
+        const user = await User.findById(req.user.id).select('-password');
+        if(!user){
+            res.status(404).json({
+                success: false,
+                message: "Người dùng không tồn tại"
+            });
+            return;
+        }
+        res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        next(error);
     }
   }
 }
