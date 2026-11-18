@@ -1,6 +1,6 @@
 import type { IUser, UserRole } from '../models/User.js';
-
-export type { IUser, UserRole };
+import type { IGame } from '../models/Game.js';
+export type { IUser, UserRole, IGame };
 
 
 
