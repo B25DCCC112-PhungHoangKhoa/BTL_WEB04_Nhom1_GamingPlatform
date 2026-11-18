@@ -74,5 +74,64 @@ export class AuthController {
       next(error);
     }
   }
+  public static async login(
+    req: Request<Record<string, never>, unknown, LoginRequestBody>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        res.status(400).json({
+          success: false,
+          message: 'Vui lòng cung cấp email và mật khẩu'
+        });
+        return;
+      }
+
+      const user = await User.findOne({ email: email.toLowerCase().trim() });
+      if (!user || !user.password) {
+        res.status(401).json({
+          success: false,
+          message: 'Email hoặc mật khẩu không chính xác'
+        });
+        return;
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        res.status(401).json({
+          success: false,
+          message: 'Email hoặc mật khẩu không chính xác'
+        });
+        return;
+      }
+
+      const jwtSecret = process.env.JWT_SECRET || 'default_jwt_secret';
+      const token = jwt.sign(
+        {
+          id: user._id.toString(),
+          role: user.role
+        },
+        jwtSecret,
+        { expiresIn: '7d' }
+      );
+
+      res.status(200).json({
+        success: true,
+        token,
+        user: {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          phoneNumber: user.phoneNumber
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default AuthController;
