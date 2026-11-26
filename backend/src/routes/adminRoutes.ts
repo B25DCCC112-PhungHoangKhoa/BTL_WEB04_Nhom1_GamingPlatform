@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { GameController } from '../controllers/gameController.js';
 import { AuthMiddleware } from '../middlewares/authMiddleware.js';
-import { UploadMiddleware } from '../middlewares/uploadMIddleware.js';
+import { UploadMiddleware } from '../middlewares/uploadMiddleware.js';
 
 const router = Router();
 // Kiểm tra xác thực và quyền admin cho tất cả các route trong router này
