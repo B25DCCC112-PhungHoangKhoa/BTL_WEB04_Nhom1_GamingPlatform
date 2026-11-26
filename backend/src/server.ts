@@ -5,6 +5,7 @@ import { Database } from "./config/db.js";
 import ErrorMiddleware from "./middlewares/errorMiddleware.js";
 import authRoutes from "./routes/authRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -24,6 +25,8 @@ app.get("/health", (_req, res) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/games", gameRoutes);
+//admin routes
+app.use("/api/admin", adminRoutes);
 
 
 // Error handling middleware 404 and Global error Handling
