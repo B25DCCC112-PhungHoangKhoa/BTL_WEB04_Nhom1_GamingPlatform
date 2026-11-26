@@ -4,6 +4,22 @@ export type { IUser, UserRole, IGame };
 
 
 
+
+export interface CreateGameRequestBody {
+  name: string;
+  slug?: string;
+  thumbnail?: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+export interface UpdateGameRequestBody {
+  name?: string;
+  slug?: string;
+  thumbnail?: string;
+  description?: string;
+  isActive?: boolean;
+}
 export interface RegisterRequestBody {
   name: string;
   email: string;
