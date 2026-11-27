@@ -35,3 +35,65 @@ export interface AuthJwtPayload {
   id: string;
   role: 'client' | 'admin';
 }
+
+
+export interface CalculatePriceResult {
+  basePrice: number;
+  multiplier: number;
+  totalPrice: number;
+  appliedOptions?: Array<{
+    key: string;
+    name: string;
+    percentage: number;
+    inputValue?: string;
+  }>;
+}
+export interface CreateOrderRequestBody {
+  serviceId: string;
+  startRankTierId: string;
+  targetRankTierId: string;
+  customOptions?: SelectedCustomOption[];
+  accountInfo: {
+    inGameAccount: string;
+    inGamePassword: string;
+    inGameServer?: string;
+    inGameName?: string;
+    contactPhone?: string;
+    note?: string;
+  };
+  paymentMethod?: 'VIETQR' | 'MOCK_CARD';
+}
+export interface SelectedCustomOption {
+  key: string;
+  name?: string;
+  percentage?: number;
+  inputValue?: string;
+}
+export interface CreateReviewRequestBody {
+  orderId: string;
+  serviceId: string;
+  rating: number;
+  comment: string;
+}
+export interface CalculatePriceRequestBody {
+  serviceId: string;
+  startRankTierId: string;
+  targetRankTierId: string;
+  customOptions?: SelectedCustomOption[];
+}
+export interface RefundInfoRequestBody {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+}
+export interface UpdateOrderStatusRequestBody {
+  orderStatus: 'pending' | 'in_progress' | 'completed' | 'canceled';
+  proofImage?: string;
+  cancelReason?: string;
+}
+
+export interface ConfirmRefundRequestBody {
+  refundProof?: string;
+}
+export type OrderStatus = 'pending' | 'in_progress' | 'completed' | 'canceled';
+export type PaymentStatus = 'pending' | 'paid' | 'refunded';
