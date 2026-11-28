@@ -2,8 +2,51 @@ import type { IUser, UserRole } from '../models/User.js';
 import type { IGame } from '../models/Game.js';
 export type { IUser, UserRole, IGame };
 
+export interface CreateRankTierRequestBody {
+  gameId: string;
+  name: string;
+  index: number;
+  costToNext: number;
+}
 
+export interface UpdateRankTierRequestBody {
+  name?: string;
+  index?: number;
+  costToNext?: number;
+}
 
+export interface CreateServiceRequestBody {
+  gameId: string;
+  name: string;
+  description?: string;
+  thumbnail?: string;
+  customOptions?: Array<{
+    key: string;
+    name: string;
+    percentage: number;
+    requiresInput?: boolean;
+    inputPlaceholder?: string;
+    description?: string;
+    isActive?: boolean;
+  }> | string;
+  isActive?: boolean;
+}
+
+export interface UpdateServiceRequestBody {
+  name?: string;
+  description?: string;
+  thumbnail?: string;
+  customOptions?: Array<{
+    key: string;
+    name: string;
+    percentage: number;
+    requiresInput?: boolean;
+    inputPlaceholder?: string;
+    description?: string;
+    isActive?: boolean;
+  }> | string;
+  isActive?: boolean;
+}
 
 export interface CreateGameRequestBody {
   name: string;
