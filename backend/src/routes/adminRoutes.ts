@@ -4,6 +4,9 @@ import { AuthMiddleware } from '../middlewares/authMiddleware.js';
 import { UploadMiddleware } from '../middlewares/uploadMiddleware.js';
 import { OrderController } from '../controllers/orderController.js';
 import { ReviewController } from '../controllers/reviewController.js';
+import { RankTierController } from '../controllers/rankTierController.js';
+import { ServiceController } from '../controllers/serviceController.js';
+
 const router = Router();
 // Kiểm tra xác thực và quyền admin cho tất cả các route trong router này
 router.use(AuthMiddleware.verifyToken, AuthMiddleware.isAdmin);
@@ -23,5 +26,21 @@ router.patch('/orders/:id/confirm-refund', UploadMiddleware.single('refundProof'
 // ADMIN: REVIEWS MANAGEMENT (/api/admin/reviews)
 // ==========================================
 router.delete('/reviews/:id', ReviewController.deleteReview);
+
+// ==========================================
+// ADMIN: RANK TIERS MANAGEMENT (/api/admin/rank-tiers)
+// ==========================================
+router.post('/rank-tiers', RankTierController.createRankTier);
+router.put('/rank-tiers/:id', RankTierController.updateRankTier);
+router.delete('/rank-tiers/:id', RankTierController.deleteRankTier);
+
+// ==========================================
+// ADMIN: SERVICES MANAGEMENT (/api/admin/services)
+// ==========================================
+router.post('/services', UploadMiddleware.single('thumbnail'), ServiceController.createService);
+router.put('/services/:id', UploadMiddleware.single('thumbnail'), ServiceController.updateService);
+router.delete('/services/:id', ServiceController.deleteService);
+router.get('/services/:id/options', ServiceController.getServiceCustomOptions);
+router.put('/services/:id/options', ServiceController.updateServiceCustomOptions);
 
 export default router;
